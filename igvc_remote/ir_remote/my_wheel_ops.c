@@ -18,16 +18,6 @@
 int32_t right_pwm = 0;
 int32_t left_pwm = 0;
 
-extern bool valid;
-extern bool forward;
-extern bool reverse;
-extern bool cw;
-extern bool ccw;
-extern bool stop;
-
-
-#define RIGHT_RECIEVER  0b00000010
-#define LEFT_RECIEVER   0b00000001
 
 //#define DEBUG
 
@@ -35,7 +25,7 @@ extern bool stop;
 void go_forward ( uint8_t speed)
 {
 
-               switch(speed)                                 // control speed--- thousand millimeters per minute
+               switch(speed)                            
             {
 
                 case 2:
@@ -84,7 +74,7 @@ void go_forward ( uint8_t speed)
 void go_backwards( uint8_t speed )
 {
 
-               switch(speed)                                 // control speed--- thousand millimeters per minute
+               switch(speed)                       
             {
                         case 2:
                                 left_pwm = 770-25;
