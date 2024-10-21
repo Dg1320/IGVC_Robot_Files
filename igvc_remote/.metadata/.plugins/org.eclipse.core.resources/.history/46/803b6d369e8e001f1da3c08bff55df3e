@@ -1,0 +1,126 @@
+/*
+ * pwminit.c
+ *
+ *  Created on: Mar 13, 2024
+ *      Author: clutch13
+ */
+
+#include <stdint.h>
+#include <stdbool.h>
+
+#include "tm4c123gh6pm.h"
+#include "pwm_init.h"
+#include "uart0.h"
+#include "wheels_back_on_track.h"
+
+
+// PortD masks
+#define RIGHT_RECIEVER  0b00000010
+#define LEFT_RECIEVER   0b00000001
+
+
+#define PIN_PA7 0b10000000
+#define PIN_PF1 0b00000010
+#define PIN_PF4 0b00010000
+#define PIN_PC4 0b00010000
+#define PIN_PC5 0b00100000
+#define PIN_PE2 0b00000100
+#define PIN_PD3 0b00001000
+
+void pwm_init()
+{
+    //---------Enable clocks
+    SYSCTL_RCGCPWM_R |= SYSCTL_RCGCPWM_R1 | SYSCTL_RCGCPWM_R0;       // turn on pwm clock
+    SYSCTL_RCGCGPIO_R |= SYSCTL_RCGCGPIO_R0 | SYSCTL_RCGCGPIO_R2 | SYSCTL_RCGCGPIO_R3 | SYSCTL_RCGCGPIO_R5;  // gpio a/b/c/f clocks on
+
+    SYSCTL_RCGCGPIO_R |=  SYSCTL_RCGCGPIO_R4;  // DEBUG PORT E
+
+    _delay_cycles(3);
+
+    //---------setup ports
+
+    // DEBUG PORT E2
+    GPIO_PORTE_DIR_R |= PIN_PE2;  // PD[1] and PD[0] are inputs
+    GPIO_PORTE_DEN_R |= PIN_PE2;
+
+    // Digital Enable Ports
+    GPIO_PORTA_DEN_R |= PIN_PA7;
+    GPIO_PORTF_DEN_R |= PIN_PF1 ;
+    GPIO_PORTC_DEN_R |= PIN_PC4 | PIN_PC5;
+
+
+    // Select Alternate Functions
+    GPIO_PORTA_AFSEL_R |= PIN_PA7;
+    GPIO_PORTF_AFSEL_R |= PIN_PF1;
+    GPIO_PORTC_AFSEL_R |= PIN_PC4 | PIN_PC5;
+
+
+    // Clear whatever value was in the original position
+    GPIO_PORTA_PCTL_R &= ~(GPIO_PCTL_PA7_M);
+    GPIO_PORTF_PCTL_R &= ~(GPIO_PCTL_PF1_M);
+    GPIO_PORTC_PCTL_R &= ~(GPIO_PCTL_PC4_M | GPIO_PCTL_PC5_M);
+
+
+    // Setup PWM timers to each of the GPIO
+    GPIO_PORTA_PCTL_R |= GPIO_PCTL_PA7_M1PWM3;
+    GPIO_PORTF_PCTL_R |= GPIO_PCTL_PF1_M1PWM5;
+    GPIO_PORTC_PCTL_R |= GPIO_PCTL_PC4_M0PWM6 | GPIO_PCTL_PC5_M0PWM7;
+
+
+    // Configure PWM module 1 to drive MOTORS       ***(TABLE 20-1 DATA SHEET)***
+    // Left Motor  : M1PWM3 (PA7)-> M1PWM1b (motion control module)
+    //               M1PWM5 (PF1)-> M1PWM2b
+
+    // Right Motor : M0PWM6 (PC4)-> M0PWM3a
+    //               M0PWM7 (PC5)-> M0PWM3b
+
+    SYSCTL_SRPWM_R = SYSCTL_SRPWM_R1 | SYSCTL_SRPWM_R0;        // reset PWM0 and PWM1 module
+    SYSCTL_SRPWM_R = 0;                                         // leave reset state
+
+    PWM1_1_CTL_R = 0;                                // turn-off PWM1 generator 1 (drives outs 2 and 3)
+    PWM1_2_CTL_R = 0;                                // turn-off PWM1 generator 2 (drives outs 4 and 5)
+    PWM0_3_CTL_R = 0;                                // turn-off PWM1 generator 3 (drives outs 6 and 7)
+
+    PWM1_1_GENB_R = PWM_1_GENB_ACTCMPBD_ONE | PWM_1_GENB_ACTLOAD_ZERO; // go high when comparator b is met
+                                                                       // then drive low when the load value is reached
+                                                                       // output 3 on PWM1, gen 1b, cmpb
+
+    PWM1_2_GENB_R = PWM_1_GENB_ACTCMPBD_ONE | PWM_1_GENB_ACTLOAD_ZERO; // output 5 on PWM1, gen 2b, cmpb
+
+    PWM0_3_GENA_R = PWM_0_GENA_ACTCMPAD_ONE | PWM_0_GENA_ACTLOAD_ZERO; // output 6 on PWM1, gen 3a, cmpa
+
+    PWM0_3_GENB_R = PWM_0_GENB_ACTCMPBD_ONE | PWM_0_GENB_ACTLOAD_ZERO; // output 7 on PWM1, gen 3b, cmpb
+
+    PWM1_1_LOAD_R = 1024;                            // human hearing from 8kHz to 20kHz
+    PWM1_2_LOAD_R = 1024;                            // set frequency to 40 MHz sys clock / 2 / 1024 = 19.53125 kHz
+    PWM0_3_LOAD_R = 1024;                            // (internal counter counts down from load value to zero)
+
+    PWM1_1_CMPB_R = 0;                               // off (0=always low, 1023=always high)
+    PWM1_2_CMPB_R = 0;
+    PWM0_3_CMPA_R = 0;
+    PWM0_3_CMPB_R = 0;
+
+    PWM1_1_CTL_R = PWM_1_CTL_ENABLE;                 // turn-on PWM1 generator 1            page 1296
+    PWM1_2_CTL_R = PWM_1_CTL_ENABLE;                 // turn-on PWM1 generator 2
+    PWM0_3_CTL_R = PWM_0_CTL_ENABLE;                 // turn-on PWM1 generator 3
+
+    // enable outputs
+    PWM1_ENABLE_R = PWM_ENABLE_PWM3EN | PWM_ENABLE_PWM5EN;
+    PWM0_ENABLE_R = PWM_ENABLE_PWM6EN | PWM_ENABLE_PWM7EN;
+
+}
+
+void setpwm(uint16_t leftmotor, uint16_t rightmotor)
+{
+       // PWM1_2_CMPB_R = leftmotor1;     // PF1
+        PWM1_1_CMPB_R = leftmotor;     // PA7
+
+        PWM0_3_CMPA_R = rightmotor;    // PC4
+      //  PWM0_3_CMPB_R = rightmotor2;    // PC5
+
+}
+
+
+
+
+

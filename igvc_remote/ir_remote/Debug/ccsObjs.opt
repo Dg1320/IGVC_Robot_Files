@@ -1,0 +1,10 @@
+"./clock.obj"
+"./main.obj"
+"./my_wheel_ops.obj"
+"./pwm_init.obj"
+"./remote_control.obj"
+"./tm4c123gh6pm_startup_ccs.obj"
+"./uart0.obj"
+"./wait.obj"
+"../tm4c123gh6pm.cmd"
+-llibc.a
