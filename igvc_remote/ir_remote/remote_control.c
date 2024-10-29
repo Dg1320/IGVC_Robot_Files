@@ -12,11 +12,12 @@
 
 #include "tm4c123gh6pm.h"
 #include "remote_control.h"
-#include "pwm_init.h"
 #include "uart0.h"
 #include "wait.h"
 
 #define GREEN_LED      (*((volatile uint32_t *)(0x42000000 + (0x400253FC-0x40000000)*32 + 3*4)))
+#define RIGHT_MOTOR            (*((volatile uint32_t *)(0x42000000 + (0x400063FC-0x40000000)*32 + 4*4)))    // PC[4]
+#define LEFT_MOTOR            (*((volatile uint32_t *)(0x42000000 + (0x400063FC-0x40000000)*32 + 5*4)))     // PC[5]
 
 
 #define PIN_PD3 0b00001000
@@ -33,7 +34,8 @@
    uint8_t state = 0 ;
    int32_t remote_command = 0;
 
-
+   uint32_t rightMotorSpeed = 60000;    // this speed allows for full stop but calibration will offset this value
+   uint32_t leftMotorSpeed = 60000;     // this speed allows for full stop but calibration will offset this value
 //-----------------------------------------------------------------------------
 // Extern Variables
 //-----------------------------------------------------------------------------
@@ -51,6 +53,7 @@
 #define IDLE_LOW_LIMIT   480000
 #define IDLE_HIGH_LIMIT  560000
 #define THIRTY_TWO_BIT_PLACE    4294967296
+
 
 void setup_remote_functions(void)
 {
@@ -96,6 +99,7 @@ void button_complete(void)
                             waitMicrosecond(500000);                      // allow light to remain .... extra signals can be caught from different sources
 
 
+
                         break;
 //------------------------------------------------------------------------------------
 
@@ -105,17 +109,24 @@ void button_complete(void)
                             waitMicrosecond(500000);                      // allow light to remain .... extra signals can be caught from different sources
 
                         break;
-//------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------      // USE FOR CALIBRATION
 
-                case 0b00100000110111110110000010011111:        // clockwise    RIGHT BUTTON
+                case 0b00100000110111110110000010011111:            //right motor speed    RIGHT BUTTON
 
                             GREEN_LED = 1;
                             waitMicrosecond(500000);                      // allow light to remain .... extra signals can be caught from different sources
 
+
+                            TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
+                            TIMER2_TAILR_R = rightMotorSpeed;            // set load value for interrupt every 10ms  == 40Hz
+                            TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+
+
                         break;
 
 
-                case 0b00100000110111111110000000011111:    // counter clockwise    LEFT BUTTON
+                case 0b00100000110111111110000000011111:            // left motor speed    LEFT BUTTON
 
                             GREEN_LED = 1;
                             waitMicrosecond(500000);                      // allow light to remain .... extra signals can be caught from different sources

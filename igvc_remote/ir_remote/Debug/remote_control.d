@@ -14,7 +14,6 @@ remote_control.obj: /home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2
 remote_control.obj: /home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdbool.h
 remote_control.obj: ../tm4c123gh6pm.h
 remote_control.obj: ../remote_control.h
-remote_control.obj: ../pwm_init.h
 remote_control.obj: ../uart0.h
 remote_control.obj: ../wait.h
 
@@ -45,8 +44,6 @@ remote_control.obj: ../wait.h
 ../tm4c123gh6pm.h:
 
 ../remote_control.h:
-
-../pwm_init.h:
 
 ../uart0.h:
 

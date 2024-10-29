@@ -5,13 +5,13 @@
  
 Building file: "../main.c"
 Invoking: Arm Compiler
-"/home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="/home/clutch13/Documents/igvc_remote/ir_remote" --include_path="/home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include" --define=ccs="ccs" --define=PART_TM4C123GH6PM -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi --preproc_with_compile --preproc_dependency="main.d_raw"  "../main.c"
-"../main.c", line 137: warning #179-D: variable "data" was declared but never referenced
+"/home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="/home/clutch13/Documents/IGVC_Robot_Files/igvc_remote/ir_remote" --include_path="/home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include" --define=ccs="ccs" --define=PART_TM4C123GH6PM -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi --preproc_with_compile --preproc_dependency="main.d_raw"  "../main.c"
+"../main.c", line 198: warning #179-D: variable "data" was declared but never referenced
 Finished building: "../main.c"
  
 Building target: "ir_remote.out"
 Invoking: Arm Linker
-"/home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=ccs="ccs" --define=PART_TM4C123GH6PM -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"ir_remote.map" --heap_size=0 --stack_size=512 -i"/home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/lib" -i"/home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="ir_remote_linkInfo.xml" --rom_model -o "ir_remote.out" "./clock.obj" "./main.obj" "./my_wheel_ops.obj" "./pwm_init.obj" "./remote_control.obj" "./tm4c123gh6pm_startup_ccs.obj" "./uart0.obj" "./wait.obj" "../tm4c123gh6pm.cmd"  -llibc.a 
+"/home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=ccs="ccs" --define=PART_TM4C123GH6PM -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"ir_remote.map" --heap_size=0 --stack_size=512 -i"/home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/lib" -i"/home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="ir_remote_linkInfo.xml" --rom_model -o "ir_remote.out" "./clock.obj" "./main.obj" "./my_wheel_ops.obj" "./remote_control.obj" "./tm4c123gh6pm_startup_ccs.obj" "./uart0.obj" "./wait.obj" "../tm4c123gh6pm.cmd"  -llibc.a 
 <Linking>
 Finished building target: "ir_remote.out"
  

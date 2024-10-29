@@ -19,8 +19,8 @@ main.obj: /home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/inc
 main.obj: ../clock.h
 main.obj: ../uart0.h
 main.obj: ../tm4c123gh6pm.h
-main.obj: ../pwm_init.h
 main.obj: ../remote_control.h
+main.obj: ../wait.h
 
 ../main.c:
 
@@ -60,7 +60,7 @@ main.obj: ../remote_control.h
 
 ../tm4c123gh6pm.h:
 
-../pwm_init.h:
-
 ../remote_control.h:
+
+../wait.h:
 

@@ -57,8 +57,9 @@ extern uint32_t __STACK_TOP;
 // To be added by user
 extern void button_command_ISR (void);
 extern void esp32_signals (void);
-
-
+extern void sysTickISR (void);
+extern void oneShotISR (void);
+extern void oneShotISR2 (void);
 //*****************************************************************************
 //
 // The vector table.  Note that the proper constructs must be placed on this to
@@ -85,11 +86,11 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // Debug monitor handler
     0,                                      // Reserved
     IntDefaultHandler,                      // The PendSV handler
-    IntDefaultHandler,                      // The SysTick handler
+    sysTickISR,                             // The SysTick handler
     IntDefaultHandler,                      // GPIO Port A
     IntDefaultHandler,                      // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
-    esp32_signals,                      // GPIO Port D
+    esp32_signals,                          // GPIO Port D
     IntDefaultHandler,                      // GPIO Port E
     IntDefaultHandler,                      // UART0 Rx and Tx
     IntDefaultHandler,                      // UART1 Rx and Tx
@@ -109,7 +110,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // Timer 0 subtimer B
     IntDefaultHandler,                      // Timer 1 subtimer A
     IntDefaultHandler,                      // Timer 1 subtimer B
-    IntDefaultHandler,                      // Timer 2 subtimer A
+    oneShotISR,                             // Timer 2 subtimer A
     IntDefaultHandler,                      // Timer 2 subtimer B
     IntDefaultHandler,                      // Analog Comparator 0
     IntDefaultHandler,                      // Analog Comparator 1
@@ -190,7 +191,7 @@ void (* const g_pfnVectors[])(void) =
     button_command_ISR,                     // Wide Timer 3 subtimer B
     IntDefaultHandler,                      // Wide Timer 4 subtimer A
     IntDefaultHandler,                      // Wide Timer 4 subtimer B
-    IntDefaultHandler,                      // Wide Timer 5 subtimer A
+    oneShotISR2,                      // Wide Timer 5 subtimer A
     IntDefaultHandler,                      // Wide Timer 5 subtimer B
     IntDefaultHandler,                      // FPU
     0,                                      // Reserved
