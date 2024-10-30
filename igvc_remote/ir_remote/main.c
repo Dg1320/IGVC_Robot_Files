@@ -19,10 +19,7 @@
 // System Clock:    40 MHz
 //
 // Hardware configuration:
-// Red LED:
-//   PF1 drives an NPN transistor that powers the red LED
-// Green LED:
-//   PF3 drives an NPN transistor that powers the green LED
+
 // UART Interface:
 //   U0TX (PA1) and U0RX (PA0) are connected to the 2nd controller
 //   The USB on the 2nd controller enumerates to an ICDI interface and a virtual COM port
@@ -45,9 +42,10 @@
 
 
 // Bitband alias
-#define GREEN_LED      (*((volatile uint32_t *)(0x42000000 + (0x400253FC-0x40000000)*32 + 3*4)))
-#define BLUE_LED      (*((volatile uint32_t *)(0x42000000 + (0x400253FC-0x40000000)*32 + 2*4)))
-#define RIGHT_MOTOR            (*((volatile uint32_t *)(0x42000000 + (0x400063FC-0x40000000)*32 + 4*4)))    // PC[4]
+#define GREEN_LED       (*((volatile uint32_t *)(0x42000000 + (0x400253FC-0x40000000)*32 + 3*4)))
+#define BLUE_LED        (*((volatile uint32_t *)(0x42000000 + (0x400253FC-0x40000000)*32 + 2*4)))
+#define RIGHT_MOTOR     (*((volatile uint32_t *)(0x42000000 + (0x400063FC-0x40000000)*32 + 4*4)))    // PC[4]
+#define LEFT_MOTOR      (*((volatile uint32_t *)(0x42000000 + (0x400063FC-0x40000000)*32 + 5*4)))    // PC[5]
 
 // PortF masks
 #define GREEN_LED_MASK 0b00001000
@@ -64,7 +62,8 @@
 //-----------------------------------------------------------------------------
 // Global Variables
 //-----------------------------------------------------------------------------
-
+   extern uint32_t rightMotorSpeed;
+   extern uint32_t leftMotorSpeed ;
 
 
 
@@ -148,7 +147,8 @@ void sysTickISR()
 {
 // make sure the pwm is 20ms every time sow we will turn on the signal here
     RIGHT_MOTOR = 1;
-    //TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+    LEFT_MOTOR = 1;
+    TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
     WTIMER5_CTL_R |= TIMER_CTL_TAEN;        // turn-on one shot timer
 }
 
@@ -159,7 +159,7 @@ void oneShotISR()
 }
 void oneShotISR2()
 {
-    RIGHT_MOTOR = 0;
+    LEFT_MOTOR = 0;
     WTIMER5_ICR_R = TIMER_ICR_TATOCINT;           // clear interrupt flag
 }
 
@@ -171,7 +171,7 @@ void oneShotSetup()
     TIMER2_CFG_R = TIMER_CFG_32_BIT_TIMER;           // configure as 32-bit timer (A+B)
     TIMER2_TAMR_R |= TIMER_TAMR_TAMR_1_SHOT;         // one shot mode
     TIMER2_TAMR_R &= ~TIMER_TAMR_TACDIR;             // (count down)
-    TIMER2_TAILR_R = 52000;                       // set load value for interrupt every 10ms  == 40Hz
+    TIMER2_TAILR_R = rightMotorSpeed;                       // set load value for interrupt every 10ms  == 40Hz
     TIMER2_IMR_R = TIMER_IMR_TATOIM;                  // turn-on interrupts
     NVIC_EN0_R = 1 << (INT_TIMER2A-16);              // turn-on interrupt 39 (TIMER2A)   --- TABLE 2-9 & 3-8
 
@@ -182,7 +182,7 @@ void oneShotSetup()
      WTIMER5_CFG_R = 4;                                  // configure as 32-bit timer
      WTIMER5_TAMR_R |= TIMER_TAMR_TAMR_1_SHOT;         // one shot mode on timer A
      WTIMER5_TAMR_R &= ~TIMER_TAMR_TACDIR;             // (count down)
-     WTIMER5_TAILR_R = 52000;                       // set load value for interrupt every 10ms  == 40Hz
+     WTIMER5_TAILR_R = leftMotorSpeed;                       // set load value for interrupt every 10ms  == 40Hz
      WTIMER5_IMR_R = TIMER_IMR_TATOIM;                  // turn-on interrupts
      NVIC_EN3_R = 1 << (INT_WTIMER5A-16-96);              // turn-on interrupt 120 (TIMER5A)   --- TABLE 2-9 & 3-8
 }

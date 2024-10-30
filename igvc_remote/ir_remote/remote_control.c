@@ -21,8 +21,15 @@
 
 
 #define PIN_PD3 0b00001000
+// forward direction                                                JEEP WITH BOTH BATTERIES
+#define RIGHT_MOTOR_OFFSET_FWDBEGIN 64300                              // right motor starts moving forward at 64300
 
+#define LEFT_MOTOR_OFFSET_FWDBEGIN 65200                               // left motor starts moving forward at 65200
 
+// reverse direction
+#define RIGHT_MOTOR_OFFSET_RVSBEGIN 57400                              // right motor starts going backwards at 57400
+
+#define LEFT_MOTOR_OFFSET_RVSBEGIN 55600                               // left motor starts moving forward at 55600
 
 //-----------------------------------------------------------------------------
 // Global Variables
@@ -34,22 +41,17 @@
    uint8_t state = 0 ;
    int32_t remote_command = 0;
 
-   uint32_t rightMotorSpeed = 60000;    // this speed allows for full stop but calibration will offset this value
-   uint32_t leftMotorSpeed = 60000;     // this speed allows for full stop but calibration will offset this value
+
+   uint32_t rightMotorSpeed = 60000;
+   uint32_t leftMotorSpeed = 60000;
+
 //-----------------------------------------------------------------------------
 // Extern Variables
 //-----------------------------------------------------------------------------
 
-   extern bool forward;
-   extern bool reverse;
-   extern bool cw;
-   extern bool ccw;
-   extern bool stop;
-   extern bool valid;
    extern bool self_drive;
-   extern bool go_ahead;
 
-#define TAU 22500           // time of tau/ 25ns = count time
+#define TAU 22500                               // time of tau/ 25ns = count time
 #define IDLE_LOW_LIMIT   480000
 #define IDLE_HIGH_LIMIT  560000
 #define THIRTY_TWO_BIT_PLACE    4294967296
@@ -84,6 +86,13 @@ void setup_remote_functions(void)
 
 }
 
+bool rightfwd = false;
+bool leftfwd = false;
+bool rightrvs = false;
+bool leftrvs= false;
+bool fwd = false;
+bool rvs = false;
+
 //#define DEBUG
 
 void button_complete(void)
@@ -97,47 +106,227 @@ void button_complete(void)
 
                             GREEN_LED = 1;
                             waitMicrosecond(500000);                      // allow light to remain .... extra signals can be caught from different sources
+                            if (!fwd)
+                            {
+                                WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
+                                leftMotorSpeed = LEFT_MOTOR_OFFSET_FWDBEGIN;
+                                WTIMER5_TAILR_R = leftMotorSpeed;
+                                WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
 
+                                TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
+                                rightMotorSpeed = RIGHT_MOTOR_OFFSET_FWDBEGIN;
+                                TIMER2_TAILR_R = rightMotorSpeed;
+                                TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
 
+                                fwd = true;
+                                rvs = false;
+
+                            }
+                            else
+                            {
+                                WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
+                                leftMotorSpeed +=500;
+;
+                                WTIMER5_TAILR_R = leftMotorSpeed;
+                                WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+                                TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
+                                rightMotorSpeed +=500;;
+                                TIMER2_TAILR_R = rightMotorSpeed;
+                                TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+                            }
 
                         break;
 //------------------------------------------------------------------------------------
 
                 case 0b00100000110111111000001001111101:          // backwards      DOWN BUTTON
 
+                    GREEN_LED = 1;
+                    waitMicrosecond(500000);                      // allow light to remain .... extra signals can be caught from different sources
+                    if (!fwd)
+                    {
+                        WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
+                        leftMotorSpeed = LEFT_MOTOR_OFFSET_RVSBEGIN;
+                        WTIMER5_TAILR_R = leftMotorSpeed;
+                        WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+                        TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
+                        rightMotorSpeed = RIGHT_MOTOR_OFFSET_RVSBEGIN;
+                        TIMER2_TAILR_R = rightMotorSpeed;
+                        TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+                        rvs = true;
+                        fwd = false;
+
+                    }
+                    else
+                    {
+                        WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
+                        leftMotorSpeed -=500;
+;
+                        WTIMER5_TAILR_R = leftMotorSpeed;
+                        WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+                        TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
+                        rightMotorSpeed -=500;;
+                        TIMER2_TAILR_R = rightMotorSpeed;
+                        TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+                    }
+
+                        break;
+//------------------------------------------------------------------------------------
+
+                case 0b00100000110111110110000010011111:            //    RIGHT BUTTON
+
                             GREEN_LED = 1;
                             waitMicrosecond(500000);                      // allow light to remain .... extra signals can be caught from different sources
 
                         break;
-//------------------------------------------------------------------------------------      // USE FOR CALIBRATION
 
-                case 0b00100000110111110110000010011111:            //right motor speed    RIGHT BUTTON
+                case 0b00100000110111111110000000011111:            //    LEFT BUTTON
 
-                            GREEN_LED = 1;
-                            waitMicrosecond(500000);                      // allow light to remain .... extra signals can be caught from different sources
-
-
-                            TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
-                            TIMER2_TAILR_R = rightMotorSpeed;            // set load value for interrupt every 10ms  == 40Hz
-                            TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
-
-
+                    GREEN_LED = 1;
+                    waitMicrosecond(500000);
 
                         break;
 
 
-                case 0b00100000110111111110000000011111:            // left motor speed    LEFT BUTTON
+                case 0b00100000110111110000000011111111:         //     CHANNEL UP BUTTON
+                    GREEN_LED = 1;
+                    waitMicrosecond(500000);
 
-                            GREEN_LED = 1;
-                            waitMicrosecond(500000);                      // allow light to remain .... extra signals can be caught from different sources
+                    if (rightfwd == false)
+                    {
+                        TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
+                        rightMotorSpeed = RIGHT_MOTOR_OFFSET_FWDBEGIN;
+                        TIMER2_TAILR_R = rightMotorSpeed;
+                        TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+                        rightfwd = true;
+                        rightrvs = false;
+                        fwd = false;
+                        rvs = false;
+
+                    }
+                    else
+                    {
+
+                    TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
+                    rightMotorSpeed +=500;
+                    TIMER2_TAILR_R = rightMotorSpeed;
+                    TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+                    }
+                        break;
+//------------------------------------------------------------------------------------
+
+                case 0b00100000110111111000000001111111:      //      CHANNEL DOWN BUTTON
+                    GREEN_LED = 1;
+                    waitMicrosecond(500000);
+
+                    if (rightrvs == false)
+                    {
+                        TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
+                        rightMotorSpeed = RIGHT_MOTOR_OFFSET_RVSBEGIN;
+                        TIMER2_TAILR_R = rightMotorSpeed;
+                        TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+                        rightfwd = false;
+                        rightrvs = true;
+                        fwd = false;
+                        rvs = false;
+
+                    }
+                    else
+                    {
+
+                    TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
+                    rightMotorSpeed -=500;
+                    TIMER2_TAILR_R = rightMotorSpeed;
+                    TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+                    }
+                        break;
+
+//------------------------------------------------------------------------------------
+
+                case 0b00100000110111110100000010111111:    //     VOLUME UP BUTTON
+
+                    GREEN_LED = 1;
+                    waitMicrosecond(500000);
+                    if (leftfwd == false)
+                    {
+                        WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
+                        leftMotorSpeed = LEFT_MOTOR_OFFSET_FWDBEGIN;
+                        WTIMER5_TAILR_R = leftMotorSpeed;
+                        WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+                        leftfwd = true;
+                        leftrvs = false;
+                        fwd = false;
+                        rvs = false;
+
+                    }
+                    else
+                    {
+
+                        WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
+                        leftMotorSpeed +=500;
+                        WTIMER5_TAILR_R = leftMotorSpeed;
+                        WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+                    }
+                        break;
+
+//------------------------------------------------------------------------------------
+                case 0b00100000110111111100000000111111:    //    VOLUME DOWN BUTTON
+
+                    GREEN_LED = 1;
+                    waitMicrosecond(500000);
+                    if (leftrvs == false)
+                    {
+                        WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
+                        leftMotorSpeed = LEFT_MOTOR_OFFSET_RVSBEGIN;
+                        WTIMER5_TAILR_R = leftMotorSpeed;
+                        WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+                        leftfwd = false;
+                        leftrvs = true;
+                        fwd = false;
+                        rvs = false;
+
+                    }
+                    else
+                    {
+
+                        WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
+                        leftMotorSpeed -=500;
+                        WTIMER5_TAILR_R = leftMotorSpeed;
+                        WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+                    }
 
                         break;
+
 
 //------------------------------------------------------------------------------------
                 case 0b00100000110111110110101010010101:  // stop         NETFLIX BUTTON
 
                             GREEN_LED = 1;
-                            waitMicrosecond(500000);                      // allow light to remain .... extra signals can be caught from different sources
+                            waitMicrosecond(500000);
+                            WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
+                            leftMotorSpeed = 60000;
+                            WTIMER5_TAILR_R = leftMotorSpeed;
+                            WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+                            TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
+                            TIMER2_TAILR_R = 60000;
+                            TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+                            rightfwd = false;
+                            rightrvs = false;
+                            leftfwd = false;
+                            leftrvs = false;
+                            fwd = false;
+                            rvs = false;
+
 
 
                         break;

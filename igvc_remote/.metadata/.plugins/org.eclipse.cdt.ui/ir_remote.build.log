@@ -3,11 +3,10 @@
 
 /home/clutch13/ti/ccs1260/ccs/utils/bin/gmake -k -j 4 all -O 
  
-Building file: "../main.c"
+Building file: "../remote_control.c"
 Invoking: Arm Compiler
-"/home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="/home/clutch13/Documents/IGVC_Robot_Files/igvc_remote/ir_remote" --include_path="/home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include" --define=ccs="ccs" --define=PART_TM4C123GH6PM -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi --preproc_with_compile --preproc_dependency="main.d_raw"  "../main.c"
-"../main.c", line 198: warning #179-D: variable "data" was declared but never referenced
-Finished building: "../main.c"
+"/home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="/home/clutch13/Documents/IGVC_Robot_Files/igvc_remote/ir_remote" --include_path="/home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include" --define=ccs="ccs" --define=PART_TM4C123GH6PM -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi --preproc_with_compile --preproc_dependency="remote_control.d_raw"  "../remote_control.c"
+Finished building: "../remote_control.c"
  
 Building target: "ir_remote.out"
 Invoking: Arm Linker
