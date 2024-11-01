@@ -91,25 +91,7 @@
 
 }
 
-void esp32_signals(void)
-{
-    if(GPIO_PORTD_MIS_R & FORWARD)       // left reciever
-   {
-           BLUE_LED ^= 1;                    // WHEN INTERRUPT OCCUR TOGGLE LED
 
-
-   }
-
-
-   if(GPIO_PORTD_MIS_R & BACKWARD)       // left reciever
-   {
-           BLUE_LED  ^= 1;                    // WHEN INTERRUPT OCCUR TOGGLE LED
-
-   }
-       GPIO_PORTD_ICR_R |= FORWARD | BACKWARD;       // clear the interrupt flag
-
-
-}
 
 void initHw()
 {
