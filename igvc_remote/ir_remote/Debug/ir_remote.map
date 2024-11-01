@@ -1,17 +1,17 @@
 ******************************************************************************
                   TI ARM Linker Unix v20.2.7                   
 ******************************************************************************
->> Linked Fri Nov  1 17:16:29 2024
+>> Linked Fri Nov  1 17:48:51 2024
 
 OUTPUT FILE NAME:   <ir_remote.out>
-ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 00001391
+ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 00001441
 
 
 MEMORY CONFIGURATION
 
          name            origin    length      used     unused   attr    fill
 ----------------------  --------  ---------  --------  --------  ----  --------
-  FLASH                 00000000   00040000  0000143e  0003ebc2  R  X
+  FLASH                 00000000   00040000  000014ee  0003eb12  R  X
   SRAM                  20000000   00008000  00000227  00007dd9  RW X
 
 
@@ -19,10 +19,10 @@ SEGMENT ALLOCATION MAP
 
 run origin  load origin   length   init length attrs members
 ----------  ----------- ---------- ----------- ----- -------
-00000000    00000000    00001444   00001444    r-x
+00000000    00000000    000014f4   000014f4    r-x
   00000000    00000000    0000026c   0000026c    r-- .intvecs
-  0000026c    0000026c    000011ae   000011ae    r-x .text
-  00001420    00001420    00000024   00000024    r-- .cinit
+  0000026c    0000026c    0000125e   0000125e    r-x .text
+  000014d0    000014d0    00000024   00000024    r-- .cinit
 20000000    20000000    00000227   00000000    rw-
   20000000    20000000    00000200   00000000    rw- .stack
   20000200    20000200    00000027   00000000    rw- .data
@@ -36,34 +36,36 @@ section   page    origin      length       input sections
 .intvecs   0    00000000    0000026c     
                   00000000    0000026c     tm4c123gh6pm_startup_ccs.obj (.intvecs)
 
-.text      0    0000026c    000011ae     
-                  0000026c    000007f4     remote_control.obj (.text)
-                  00000a60    000004fc     uart0.obj (.text)
-                  00000f5c    0000016c     timing.obj (.text)
-                  000010c8    000000f8     main.obj (.text)
-                  000011c0    0000009c     rtsv7M4_T_le_v4SPD16_eabi.lib : memcpy_t2.asm.obj (.text)
-                  0000125c    00000088     isr.obj (.text)
-                  000012e4    00000068     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_lzss.c.obj (.text:decompress:lzss:__TI_decompress_lzss)
-                  0000134c    00000044                                   : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit:__TI_auto_init_nobinit_nopinit)
-                  00001390    00000034                                   : boot_cortex_m.c.obj (.text:_c_int00_noargs:_c_int00_noargs)
-                  000013c4    00000024     wait.obj (.text)
-                  000013e8    00000010     clock.obj (.text)
-                  000013f8    0000000e     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_none.c.obj (.text:decompress:none:__TI_decompress_none)
-                  00001406    0000000c     tm4c123gh6pm_startup_ccs.obj (.text)
-                  00001412    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : pre_init.c.obj (.text:_system_pre_init)
-                  00001416    00000004                                   : exit.c.obj (.text:abort:abort)
+.text      0    0000026c    0000125e     
+                  0000026c    000004fc     uart0.obj (.text)
+                  00000768    00000494     remote_control.obj (.text)
+                  00000bfc    00000410     my_wheel_ops.obj (.text)
+                  0000100c    0000016c     timing.obj (.text)
+                  00001178    000000f8     main.obj (.text)
+                  00001270    0000009c     rtsv7M4_T_le_v4SPD16_eabi.lib : memcpy_t2.asm.obj (.text)
+                  0000130c    00000088     isr.obj (.text)
+                  00001394    00000068     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_lzss.c.obj (.text:decompress:lzss:__TI_decompress_lzss)
+                  000013fc    00000044                                   : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit:__TI_auto_init_nobinit_nopinit)
+                  00001440    00000034                                   : boot_cortex_m.c.obj (.text:_c_int00_noargs:_c_int00_noargs)
+                  00001474    00000024     wait.obj (.text)
+                  00001498    00000010     clock.obj (.text)
+                  000014a8    0000000e     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_none.c.obj (.text:decompress:none:__TI_decompress_none)
+                  000014b6    0000000c     tm4c123gh6pm_startup_ccs.obj (.text)
+                  000014c2    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : pre_init.c.obj (.text:_system_pre_init)
+                  000014c6    00000004                                   : exit.c.obj (.text:abort:abort)
 
-.cinit     0    00001420    00000024     
-                  00001420    00000013     (.cinit..data.load) [load image, compression = lzss]
-                  00001433    00000001     --HOLE-- [fill = 0]
-                  00001434    00000008     (__TI_handler_table)
-                  0000143c    00000008     (__TI_cinit_table)
+.cinit     0    000014d0    00000024     
+                  000014d0    00000013     (.cinit..data.load) [load image, compression = lzss]
+                  000014e3    00000001     --HOLE-- [fill = 0]
+                  000014e4    00000008     (__TI_handler_table)
+                  000014ec    00000008     (__TI_cinit_table)
 
 .init_array 
 *          0    00000000    00000000     UNINITIALIZED
 
 .data      0    20000200    00000027     UNINITIALIZED
-                  20000200    00000026     remote_control.obj (.data)
+                  20000200    00000020     remote_control.obj (.data)
+                  20000220    00000006     my_wheel_ops.obj (.data)
                   20000226    00000001     isr.obj (.data)
 
 .stack     0    20000000    00000200     UNINITIALIZED
@@ -78,8 +80,9 @@ MODULE SUMMARY
        Module                         code   ro data   rw data
        ------                         ----   -------   -------
     ./
-       remote_control.obj             2036   0         38     
        uart0.obj                      1276   0         0      
+       remote_control.obj             1172   0         32     
+       my_wheel_ops.obj               1040   0         6      
        tm4c123gh6pm_startup_ccs.obj   12     620       0      
        timing.obj                     364    0         0      
        main.obj                       248    0         0      
@@ -87,7 +90,7 @@ MODULE SUMMARY
        wait.obj                       36     0         0      
        clock.obj                      16     0         0      
     +--+------------------------------+------+---------+---------+
-       Total:                         4124   620       39     
+       Total:                         4300   620       39     
                                                               
     /home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/lib/rtsv7M4_T_le_v4SPD16_eabi.lib
        memcpy_t2.asm.obj              156    0         0      
@@ -103,18 +106,18 @@ MODULE SUMMARY
        Stack:                         0      0         512    
        Linker Generated:              0      35        0      
     +--+------------------------------+------+---------+---------+
-       Grand Total:                   4526   655       551    
+       Grand Total:                   4702   655       551    
 
 
 LINKER GENERATED COPY TABLES
 
-__TI_cinit_table @ 0000143c records: 1, size/record: 8, table size: 8
-	.data: load addr=00001420, load size=00000013 bytes, run addr=20000200, run size=00000027 bytes, compression=lzss
+__TI_cinit_table @ 000014ec records: 1, size/record: 8, table size: 8
+	.data: load addr=000014d0, load size=00000013 bytes, run addr=20000200, run size=00000027 bytes, compression=lzss
 
 
 LINKER GENERATED HANDLER TABLE
 
-__TI_handler_table @ 00001434 records: 2, size/record: 4, table size: 8
+__TI_handler_table @ 000014e4 records: 2, size/record: 4, table size: 8
 	index: 0, handler: __TI_decompress_lzss
 	index: 1, handler: __TI_decompress_none
 
@@ -123,86 +126,99 @@ GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name
 
 address   name                          
 -------   ----                          
-00001417  C$$EXIT                       
-00001407  ResetISR                      
+000014c7  C$$EXIT                       
+000014b7  ResetISR                      
 20000200  __STACK_END                   
 00000200  __STACK_SIZE                  
 20000200  __STACK_TOP                   
-0000143c  __TI_CINIT_Base               
-00001444  __TI_CINIT_Limit              
-00001434  __TI_Handler_Table_Base       
-0000143c  __TI_Handler_Table_Limit      
-0000134d  __TI_auto_init_nobinit_nopinit
-000012e5  __TI_decompress_lzss          
-000013f9  __TI_decompress_none          
+000014ec  __TI_CINIT_Base               
+000014f4  __TI_CINIT_Limit              
+000014e4  __TI_Handler_Table_Base       
+000014ec  __TI_Handler_Table_Limit      
+000013fd  __TI_auto_init_nobinit_nopinit
+00001395  __TI_decompress_lzss          
+000014a9  __TI_decompress_none          
 ffffffff  __TI_pprof_out_hndl           
 ffffffff  __TI_prof_data_size           
 ffffffff  __TI_prof_data_start          
 00000000  __TI_static_base__            
-000011c1  __aeabi_memcpy                
-000011c1  __aeabi_memcpy4               
-000011c1  __aeabi_memcpy8               
+00001271  __aeabi_memcpy                
+00001271  __aeabi_memcpy4               
+00001271  __aeabi_memcpy8               
 ffffffff  __binit__                     
 ffffffff  __c_args__                    
 UNDEFED   __mpu_init                    
 20000000  __stack                       
 20000000  __start___llvm_prf_cnts       
 20000000  __stop___llvm_prf_cnts        
-00001391  _c_int00_noargs               
+00001441  _c_int00_noargs               
 UNDEFED   _system_post_cinit            
-00001413  _system_pre_init              
-00001417  abort                         
+000014c3  _system_pre_init              
+000014c7  abort                         
 ffffffff  binit                         
 2000020c  bit_count                     
-000008a9  button_command_ISR            
-00000425  button_complete               
+00000a59  button_command_ISR            
+000008e1  button_complete               
 20000200  button_info                   
-00000c73  char_to_integer               
-00000c27  compare_2words                
-00000301  esp32_signals                 
-000010c9  esp32_signals_setup           
+0000047f  char_to_integer               
+00000433  compare_2words                
+000007fd  esp32_signals                 
+00001179  esp32_signals_setup           
 20000224  fwd                           
 00000000  g_pfnVectors                  
-00000ea3  getFieldInteger               
-00000e5b  getFieldString                
-00000b57  getcUart0                     
-00000b6b  getsUart0                     
-00001121  initHw                        
-00001039  initSysTick                   
-000013e9  initSystemClockTo40Mhz        
-00000a61  initUart0                     
-00000cb5  int_to_ascii                  
-00000eeb  isCommand                     
-00000bd9  isita_character               
-00000c05  isita_number                  
-00000f27  kbhitUart0                    
+000006af  getFieldInteger               
+00000667  getFieldString                
+00000363  getcUart0                     
+00000377  getsUart0                     
+00000e79  goForward                     
+00000f25  goReverse                     
+00000ecf  increaseForwardSpeed          
+00000f9d  increaseReverseSpeed          
+000011d1  initHw                        
+000010e9  initSysTick                   
+00001499  initSystemClockTo40Mhz        
+0000026d  initUart0                     
+000004c1  int_to_ascii                  
+000006f7  isCommand                     
+000003e5  isita_character               
+00000411  isita_number                  
+00000733  kbhitUart0                    
+00000d4d  leftMotorIncreaseSpeedFwd     
+00000dcf  leftMotorIncreaseSpeedRvs     
 2000021c  leftMotorSpeed                
+00000d01  leftMotorStartFwd             
+00000d83  leftMotorStartRvs             
 20000221  leftfwd                       
 20000223  leftrvs                       
-00001161  main                          
-000011c1  memcpy                        
-00000f41  number_to_uart                
-0000129b  oneSecISR                     
-00000f5d  oneSecTimerSetup              
-0000127f  oneShotISR                    
-0000128d  oneShotISR2                   
-00000fa3  oneShotSetup                  
-00000d4d  parseFields                   
+00000e05  letsStop                      
+00001211  main                          
+00001271  memcpy                        
+0000074d  number_to_uart                
+0000134b  oneSecISR                     
+0000100d  oneSecTimerSetup              
+0000132f  oneShotISR                    
+0000133d  oneShotISR2                   
+00001053  oneShotSetup                  
+00000559  parseFields                   
 20000208  prev_time                     
-00000b0f  putcUart0                     
-00000b2b  putsUart0                     
+0000031b  putcUart0                     
+00000337  putsUart0                     
 20000214  remote_command                
+00000c49  rightMotorIncreaseSpeedFwd    
+00000ccb  rightMotorIncreaseSpeedRvs    
 20000218  rightMotorSpeed               
+00000bfd  rightMotorStartFwd            
+00000c7f  rightMotorStartRvs            
 20000220  rightfwd                      
 20000222  rightrvs                      
 20000225  rvs                           
 20000226  seconds                       
-00000acb  setUart0BaudRate              
-0000026d  setup_remote_functions        
+000002d7  setUart0BaudRate              
+00000769  setup_remote_functions        
 20000210  state                         
-0000125d  sysTickISR                    
+0000130d  sysTickISR                    
 20000204  time                          
-000013c5  waitMicrosecond               
+00001475  waitMicrosecond               
 
 
 GLOBAL SYMBOLS: SORTED BY Symbol Address 
@@ -212,55 +228,68 @@ address   name
 00000000  __TI_static_base__            
 00000000  g_pfnVectors                  
 00000200  __STACK_SIZE                  
-0000026d  setup_remote_functions        
-00000301  esp32_signals                 
-00000425  button_complete               
-000008a9  button_command_ISR            
-00000a61  initUart0                     
-00000acb  setUart0BaudRate              
-00000b0f  putcUart0                     
-00000b2b  putsUart0                     
-00000b57  getcUart0                     
-00000b6b  getsUart0                     
-00000bd9  isita_character               
-00000c05  isita_number                  
-00000c27  compare_2words                
-00000c73  char_to_integer               
-00000cb5  int_to_ascii                  
-00000d4d  parseFields                   
-00000e5b  getFieldString                
-00000ea3  getFieldInteger               
-00000eeb  isCommand                     
-00000f27  kbhitUart0                    
-00000f41  number_to_uart                
-00000f5d  oneSecTimerSetup              
-00000fa3  oneShotSetup                  
-00001039  initSysTick                   
-000010c9  esp32_signals_setup           
-00001121  initHw                        
-00001161  main                          
-000011c1  __aeabi_memcpy                
-000011c1  __aeabi_memcpy4               
-000011c1  __aeabi_memcpy8               
-000011c1  memcpy                        
-0000125d  sysTickISR                    
-0000127f  oneShotISR                    
-0000128d  oneShotISR2                   
-0000129b  oneSecISR                     
-000012e5  __TI_decompress_lzss          
-0000134d  __TI_auto_init_nobinit_nopinit
-00001391  _c_int00_noargs               
-000013c5  waitMicrosecond               
-000013e9  initSystemClockTo40Mhz        
-000013f9  __TI_decompress_none          
-00001407  ResetISR                      
-00001413  _system_pre_init              
-00001417  C$$EXIT                       
-00001417  abort                         
-00001434  __TI_Handler_Table_Base       
-0000143c  __TI_CINIT_Base               
-0000143c  __TI_Handler_Table_Limit      
-00001444  __TI_CINIT_Limit              
+0000026d  initUart0                     
+000002d7  setUart0BaudRate              
+0000031b  putcUart0                     
+00000337  putsUart0                     
+00000363  getcUart0                     
+00000377  getsUart0                     
+000003e5  isita_character               
+00000411  isita_number                  
+00000433  compare_2words                
+0000047f  char_to_integer               
+000004c1  int_to_ascii                  
+00000559  parseFields                   
+00000667  getFieldString                
+000006af  getFieldInteger               
+000006f7  isCommand                     
+00000733  kbhitUart0                    
+0000074d  number_to_uart                
+00000769  setup_remote_functions        
+000007fd  esp32_signals                 
+000008e1  button_complete               
+00000a59  button_command_ISR            
+00000bfd  rightMotorStartFwd            
+00000c49  rightMotorIncreaseSpeedFwd    
+00000c7f  rightMotorStartRvs            
+00000ccb  rightMotorIncreaseSpeedRvs    
+00000d01  leftMotorStartFwd             
+00000d4d  leftMotorIncreaseSpeedFwd     
+00000d83  leftMotorStartRvs             
+00000dcf  leftMotorIncreaseSpeedRvs     
+00000e05  letsStop                      
+00000e79  goForward                     
+00000ecf  increaseForwardSpeed          
+00000f25  goReverse                     
+00000f9d  increaseReverseSpeed          
+0000100d  oneSecTimerSetup              
+00001053  oneShotSetup                  
+000010e9  initSysTick                   
+00001179  esp32_signals_setup           
+000011d1  initHw                        
+00001211  main                          
+00001271  __aeabi_memcpy                
+00001271  __aeabi_memcpy4               
+00001271  __aeabi_memcpy8               
+00001271  memcpy                        
+0000130d  sysTickISR                    
+0000132f  oneShotISR                    
+0000133d  oneShotISR2                   
+0000134b  oneSecISR                     
+00001395  __TI_decompress_lzss          
+000013fd  __TI_auto_init_nobinit_nopinit
+00001441  _c_int00_noargs               
+00001475  waitMicrosecond               
+00001499  initSystemClockTo40Mhz        
+000014a9  __TI_decompress_none          
+000014b7  ResetISR                      
+000014c3  _system_pre_init              
+000014c7  C$$EXIT                       
+000014c7  abort                         
+000014e4  __TI_Handler_Table_Base       
+000014ec  __TI_CINIT_Base               
+000014ec  __TI_Handler_Table_Limit      
+000014f4  __TI_CINIT_Limit              
 20000000  __stack                       
 20000000  __start___llvm_prf_cnts       
 20000000  __stop___llvm_prf_cnts        
@@ -290,4 +319,4 @@ ffffffff  binit
 UNDEFED   __mpu_init                    
 UNDEFED   _system_post_cinit            
 
-[80 symbols]
+[93 symbols]

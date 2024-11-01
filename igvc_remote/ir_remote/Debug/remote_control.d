@@ -16,6 +16,7 @@ remote_control.obj: ../tm4c123gh6pm.h
 remote_control.obj: ../remote_control.h
 remote_control.obj: ../uart0.h
 remote_control.obj: ../wait.h
+remote_control.obj: ../my_wheel_ops.h
 
 ../remote_control.c:
 
@@ -48,4 +49,6 @@ remote_control.obj: ../wait.h
 ../uart0.h:
 
 ../wait.h:
+
+../my_wheel_ops.h:
 

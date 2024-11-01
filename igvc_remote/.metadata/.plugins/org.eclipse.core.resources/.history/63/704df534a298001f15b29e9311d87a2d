@@ -1,0 +1,165 @@
+/*
+ * my_wheel_ops.c
+ *
+ *  Created on: Nov 1, 2024
+ *      Author: clutch13
+ */
+
+#include <stdint.h>
+#include <stdbool.h>
+
+#include "remote_control.h"
+#include "tm4c123gh6pm.h"
+
+#define GREEN_LED      (*((volatile uint32_t *)(0x42000000 + (0x400253FC-0x40000000)*32 + 3*4)))
+
+
+void rightMotorStartFwd(void)
+{
+    GREEN_LED = 1;
+    waitMicrosecond(500000);
+    //////////////////////////////////////////////////////////////////////////
+    TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
+    rightMotorSpeed = RIGHT_MOTOR_OFFSET_FWDBEGIN;
+    TIMER2_TAILR_R = rightMotorSpeed;
+    TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+    rightfwd = true;
+    rightrvs = false;
+    fwd = false;
+    rvs = false;
+}
+void rightMotorIncreaseSpeedFwd(void)
+{
+    GREEN_LED = 1;
+    waitMicrosecond(500000);
+    //////////////////////////////////////////////////////////////////////////
+    TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
+    rightMotorSpeed +=500;
+    TIMER2_TAILR_R = rightMotorSpeed;
+    TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+}
+void rightMotorStartRvs(void)
+{
+    GREEN_LED = 1;
+    waitMicrosecond(500000);
+    //////////////////////////////////////////////////////////////////////////
+    TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
+    rightMotorSpeed = RIGHT_MOTOR_OFFSET_RVSBEGIN;
+    TIMER2_TAILR_R = rightMotorSpeed;
+    TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+    rightfwd = false;
+    rightrvs = true;
+    fwd = false;
+    rvs = false;
+}
+void rightMotorIncreaseSpeedRvs(void)
+{
+    GREEN_LED = 1;
+    waitMicrosecond(500000);
+    //////////////////////////////////////////////////////////////////////////
+    TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
+    rightMotorSpeed -=500;
+    TIMER2_TAILR_R = rightMotorSpeed;
+    TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+}
+void leftMotorStartFwd(void)
+{
+    GREEN_LED = 1;
+    waitMicrosecond(500000);
+    //////////////////////////////////////////////////////////////////////////
+    WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
+    leftMotorSpeed = LEFT_MOTOR_OFFSET_FWDBEGIN;
+    WTIMER5_TAILR_R = leftMotorSpeed;
+    WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+    leftfwd = true;
+    leftrvs = false;
+    fwd = false;
+    rvs = false;
+}
+void leftMotorIncreaseSpeedFwd(void)
+{
+    GREEN_LED = 1;
+    waitMicrosecond(500000);
+    //////////////////////////////////////////////////////////////////////////
+    WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
+    leftMotorSpeed +=500;
+    WTIMER5_TAILR_R = leftMotorSpeed;
+    WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+}
+
+void leftMotorStartRvs(void)
+{
+    GREEN_LED = 1;
+    waitMicrosecond(500000);
+    //////////////////////////////////////////////////////////////////////////
+    WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
+    leftMotorSpeed = LEFT_MOTOR_OFFSET_RVSBEGIN;
+    WTIMER5_TAILR_R = leftMotorSpeed;
+    WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+    leftfwd = false;
+    leftrvs = true;
+    fwd = false;
+    rvs = false;
+
+}
+void leftMotorIncreaseSpeedRvs(void)
+{
+    GREEN_LED = 1;
+    waitMicrosecond(500000);
+    //////////////////////////////////////////////////////////////////////////
+    WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
+    leftMotorSpeed -=500;
+    WTIMER5_TAILR_R = leftMotorSpeed;
+    WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+}
+
+void letsStop(void)
+{
+    GREEN_LED = 1;
+    waitMicrosecond(500000);
+    //////////////////////////////////////////////////////////////////////////
+    WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
+    leftMotorSpeed = 60000;
+    WTIMER5_TAILR_R = leftMotorSpeed;
+    WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+    TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
+    TIMER2_TAILR_R = 60000;
+    TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+    rightfwd = false;
+    rightrvs = false;
+    leftfwd = false;
+    leftrvs = false;
+    fwd = false;
+    rvs = false;
+}
+
+void goForward(void)
+{
+    WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
+    leftMotorSpeed = LEFT_MOTOR_OFFSET_FWDBEGIN;
+    WTIMER5_TAILR_R = leftMotorSpeed;
+    WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+    TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
+    rightMotorSpeed = RIGHT_MOTOR_OFFSET_FWDBEGIN;
+    TIMER2_TAILR_R = rightMotorSpeed;
+    TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+    fwd = true;
+    rvs = false;
+}
+void increaseForwardSpeed(void)
+{
+    WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
+    leftMotorSpeed +=1000;
+    WTIMER5_TAILR_R = leftMotorSpeed;
+    WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+    TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
+    rightMotorSpeed +=1000;;
+    TIMER2_TAILR_R = rightMotorSpeed;
+    TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+}

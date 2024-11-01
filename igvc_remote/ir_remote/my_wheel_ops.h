@@ -9,12 +9,23 @@
 #define MY_WHEEL_OPS_H_
 
 #include <stdint.h>
+void rightMotorStartFwd(void);
+void rightMotorIncreaseSpeedFwd(void);
+void rightMotorStartRvs(void);
+void rightMotorIncreaseSpeedRvs(void);
 
-void go_forward ( uint8_t speed);
-void go_backwards( uint8_t speed);
-void go_right( uint8_t speed);
-void go_left (uint8_t speed);
-void lets_stop (void);
+void leftMotorStartFwd(void);
+void leftMotorIncreaseSpeedFwd(void);
+void leftMotorStartRvs(void);
+void leftMotorIncreaseSpeedRvs(void);
 
+void goForward(void);
+void goReverse(void);
+
+void increaseForwardSpeed(void);
+void increaseReverseSpeed(void);
+
+
+void letsStop(void);
 
 #endif /* MY_WHEEL_OPS_H_ */

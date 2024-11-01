@@ -14,9 +14,7 @@ my_wheel_ops.obj: /home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7
 my_wheel_ops.obj: /home/clutch13/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdbool.h
 my_wheel_ops.obj: ../remote_control.h
 my_wheel_ops.obj: ../tm4c123gh6pm.h
-my_wheel_ops.obj: ../uart0.h
-my_wheel_ops.obj: ../my_wheel_ops.h
-my_wheel_ops.obj: ../pwm_init.h
+my_wheel_ops.obj: ../wait.h
 
 ../my_wheel_ops.c:
 
@@ -46,9 +44,5 @@ my_wheel_ops.obj: ../pwm_init.h
 
 ../tm4c123gh6pm.h:
 
-../uart0.h:
-
-../my_wheel_ops.h:
-
-../pwm_init.h:
+../wait.h:
 
