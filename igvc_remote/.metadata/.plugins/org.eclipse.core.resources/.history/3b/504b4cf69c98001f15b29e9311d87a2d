@@ -1,0 +1,21 @@
+/*
+ * timing.c
+ *
+ *  Created on: Nov 1, 2024
+ *      Author: clutch13
+ */
+
+void oneSecTimerSetup(void)
+{
+    // Configure Timer 1 as the time base
+    TIMER1_CTL_R &= ~TIMER_CTL_TAEN;                 // turn-off timer before reconfiguring
+    TIMER1_CFG_R = TIMER_CFG_32_BIT_TIMER;           // configure as 32-bit timer (A+B)
+    TIMER1_TAMR_R = TIMER_TAMR_TAMR_PERIOD;          // configure for periodic mode (count down)
+    TIMER1_TAILR_R = 40000000;                       // set load value to 40e6 for 1 Hz interrupt rate
+    TIMER1_IMR_R = TIMER_IMR_TATOIM;                 // turn-on interrupts
+    TIMER1_CTL_R |= TIMER_CTL_TAEN;                  // turn-on timer
+    NVIC_EN0_R = 1 << (INT_TIMER1A-16);              // turn-on interrupt 37 (TIMER1A)
+}
+
+
+

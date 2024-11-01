@@ -60,6 +60,7 @@ extern void esp32_signals (void);
 extern void sysTickISR (void);
 extern void oneShotISR (void);
 extern void oneShotISR2 (void);
+extern void oneSecISR (void);
 //*****************************************************************************
 //
 // The vector table.  Note that the proper constructs must be placed on this to
@@ -108,7 +109,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // Watchdog timer
     IntDefaultHandler,                      // Timer 0 subtimer A
     IntDefaultHandler,                      // Timer 0 subtimer B
-    IntDefaultHandler,                      // Timer 1 subtimer A
+    oneSecISR,                              // Timer 1 subtimer A
     IntDefaultHandler,                      // Timer 1 subtimer B
     oneShotISR,                             // Timer 2 subtimer A
     IntDefaultHandler,                      // Timer 2 subtimer B

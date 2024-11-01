@@ -21,6 +21,8 @@ main.obj: ../uart0.h
 main.obj: ../tm4c123gh6pm.h
 main.obj: ../remote_control.h
 main.obj: ../wait.h
+main.obj: ../timing.h
+main.obj: ../isr.h
 
 ../main.c:
 
@@ -63,4 +65,8 @@ main.obj: ../wait.h
 ../remote_control.h:
 
 ../wait.h:
+
+../timing.h:
+
+../isr.h:
 

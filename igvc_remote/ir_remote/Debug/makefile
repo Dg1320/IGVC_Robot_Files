@@ -9,9 +9,11 @@ GEN_CMDS__FLAG :=
 
 ORDERED_OBJS += \
 "./clock.obj" \
+"./isr.obj" \
 "./main.obj" \
 "./my_wheel_ops.obj" \
 "./remote_control.obj" \
+"./timing.obj" \
 "./tm4c123gh6pm_startup_ccs.obj" \
 "./uart0.obj" \
 "./wait.obj" \
@@ -145,8 +147,8 @@ ir_remote.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "clock.obj" "main.obj" "my_wheel_ops.obj" "remote_control.obj" "tm4c123gh6pm_startup_ccs.obj" "uart0.obj" "wait.obj" 
-	-$(RM) "clock.d" "main.d" "my_wheel_ops.d" "remote_control.d" "tm4c123gh6pm_startup_ccs.d" "uart0.d" "wait.d" 
+	-$(RM) "clock.obj" "isr.obj" "main.obj" "my_wheel_ops.obj" "remote_control.obj" "timing.obj" "tm4c123gh6pm_startup_ccs.obj" "uart0.obj" "wait.obj" 
+	-$(RM) "clock.d" "isr.d" "main.d" "my_wheel_ops.d" "remote_control.d" "timing.d" "tm4c123gh6pm_startup_ccs.d" "uart0.d" "wait.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

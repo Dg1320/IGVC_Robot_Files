@@ -39,13 +39,11 @@
 #include "tm4c123gh6pm.h"
 #include "remote_control.h"
 #include "wait.h"
-
-
+#include "timing.h"
+#include "isr.h"
 // Bitband alias
 #define GREEN_LED       (*((volatile uint32_t *)(0x42000000 + (0x400253FC-0x40000000)*32 + 3*4)))
 #define BLUE_LED        (*((volatile uint32_t *)(0x42000000 + (0x400253FC-0x40000000)*32 + 2*4)))
-#define RIGHT_MOTOR     (*((volatile uint32_t *)(0x42000000 + (0x400063FC-0x40000000)*32 + 4*4)))    // PC[4]
-#define LEFT_MOTOR      (*((volatile uint32_t *)(0x42000000 + (0x400063FC-0x40000000)*32 + 5*4)))    // PC[5]
 
 // PortF masks
 #define GREEN_LED_MASK 0b00001000
@@ -62,8 +60,8 @@
 //-----------------------------------------------------------------------------
 // Global Variables
 //-----------------------------------------------------------------------------
-   extern uint32_t rightMotorSpeed;
-   extern uint32_t leftMotorSpeed ;
+
+
 
 
 
@@ -113,62 +111,6 @@ void initHw()
 
 }
 
-void initSysTick()
-{
-    // sysTick initialized for 20ms
-    NVIC_INT_CTRL_R &= NVIC_INT_CTRL_PEND_SV;
-    NVIC_ST_CTRL_R = 0;                                                 // disable systick while configuring
-    NVIC_ST_RELOAD_R = 800000 - 1;                                       // reload value set to be 1ms based on 40MHz clock
-                                                                        // datasheet pg.140 on why subtracting 1
-    NVIC_ST_CURRENT_R = 0 ;                                             // any write to current clears count bit which activates the interrupt
-    NVIC_ST_CTRL_R = 0x0007;                                            // enable systick x interrupt x systemclock
-
-}
-
-void sysTickISR()
-{
-// make sure the pwm is 20ms every time sow we will turn on the signal here
-    RIGHT_MOTOR = 1;
-    LEFT_MOTOR = 1;
-    TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
-    WTIMER5_CTL_R |= TIMER_CTL_TAEN;        // turn-on one shot timer
-}
-
-void oneShotISR()
-{
-    RIGHT_MOTOR = 0;
-    TIMER2_ICR_R = TIMER_ICR_TATOCINT;           // clear interrupt flag
-}
-void oneShotISR2()
-{
-    LEFT_MOTOR = 0;
-    WTIMER5_ICR_R = TIMER_ICR_TATOCINT;           // clear interrupt flag
-}
-
-void oneShotSetup()
-{
-    SYSCTL_RCGCTIMER_R |= SYSCTL_RCGCTIMER_R2 ;       // turn on timer 2
-    _delay_cycles(3);
-    TIMER2_CTL_R &= ~TIMER_CTL_TAEN;                 // turn-off timer before reconfiguring
-    TIMER2_CFG_R = TIMER_CFG_32_BIT_TIMER;           // configure as 32-bit timer (A+B)
-    TIMER2_TAMR_R |= TIMER_TAMR_TAMR_1_SHOT;         // one shot mode
-    TIMER2_TAMR_R &= ~TIMER_TAMR_TACDIR;             // (count down)
-    TIMER2_TAILR_R = rightMotorSpeed;                       // set load value for interrupt every 10ms  == 40Hz
-    TIMER2_IMR_R = TIMER_IMR_TATOIM;                  // turn-on interrupts
-    NVIC_EN0_R = 1 << (INT_TIMER2A-16);              // turn-on interrupt 39 (TIMER2A)   --- TABLE 2-9 & 3-8
-
-    // wide timer 5A     PD[6]
-    SYSCTL_RCGCWTIMER_R |= SYSCTL_RCGCWTIMER_R5;
-    _delay_cycles(3);
-     WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;                 // turn-off Wide timer A before reconfiguring
-     WTIMER5_CFG_R = 4;                                  // configure as 32-bit timer
-     WTIMER5_TAMR_R |= TIMER_TAMR_TAMR_1_SHOT;         // one shot mode on timer A
-     WTIMER5_TAMR_R &= ~TIMER_TAMR_TACDIR;             // (count down)
-     WTIMER5_TAILR_R = leftMotorSpeed;                       // set load value for interrupt every 10ms  == 40Hz
-     WTIMER5_IMR_R = TIMER_IMR_TATOIM;                  // turn-on interrupts
-     NVIC_EN3_R = 1 << (INT_WTIMER5A-16-96);              // turn-on interrupt 120 (TIMER5A)   --- TABLE 2-9 & 3-8
-}
-
 //-----------------------------------------------------------------------------
 // Main
 //-----------------------------------------------------------------------------
@@ -182,6 +124,7 @@ int main(void)
     initSysTick();
     oneShotSetup();
     setup_remote_functions();
+    oneSecTimerSetup();
 
     // Setup UART0 baud rate
     setUart0BaudRate(115200, 40e6);

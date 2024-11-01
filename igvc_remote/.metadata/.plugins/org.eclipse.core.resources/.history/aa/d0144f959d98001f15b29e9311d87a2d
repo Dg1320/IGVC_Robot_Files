@@ -1,0 +1,29 @@
+/*
+ * isr.c
+ *
+ *  Created on: Nov 1, 2024
+ *      Author: clutch13
+ */
+
+
+
+
+void sysTickISR()
+{
+// make sure the pwm is 20ms every time sow we will turn on the signal here
+    RIGHT_MOTOR = 1;
+    LEFT_MOTOR = 1;
+    TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+    WTIMER5_CTL_R |= TIMER_CTL_TAEN;        // turn-on one shot timer
+}
+
+void oneShotISR()
+{
+    RIGHT_MOTOR = 0;
+    TIMER2_ICR_R = TIMER_ICR_TATOCINT;           // clear interrupt flag
+}
+void oneShotISR2()
+{
+    LEFT_MOTOR = 0;
+    WTIMER5_ICR_R = TIMER_ICR_TATOCINT;           // clear interrupt flag
+}
