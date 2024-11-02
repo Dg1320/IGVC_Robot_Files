@@ -10321,3 +10321,94 @@ java.nio.channels.ClosedByInterruptException
 	at org.eclipse.cdt.internal.ui.text.c.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:149)
 	at org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverProxy.getHoverInfo2(CEditorTextHoverProxy.java:85)
 	at org.eclipse.jface.text.TextViewerHoverManager$1.run(TextViewerHoverManager.java:155)
+
+!ENTRY org.eclipse.core.resources 4 566 2024-11-01 17:51:23.244
+!MESSAGE Workspace was not properly initialized or has already shutdown.
+!SESSION 2024-11-01 18:32:34.549 -----------------------------------------------
+eclipse.buildId=4.23.0.I20220308-0310
+java.version=11.0.13
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Framework arguments:  -product com.ti.ccstudio.branding.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product com.ti.ccstudio.branding.product
+
+!ENTRY com.ti.common.core 1 0 2024-11-01 18:32:39.267
+!MESSAGE path=ccs_base/DebugServer
+
+!ENTRY com.ti.common.core 1 0 2024-11-01 18:32:39.269
+!MESSAGE debugServerDir=/home/clutch13/ti/ccs1260/ccs/ccs_base/DebugServer
+
+!ENTRY com.ti.ccstudio.ui 1 0 2024-11-01 18:32:51.167
+!MESSAGE CCS IDE session started!
+	CCS build: 12.6.0.00008
+	CCS location: /home/clutch13/ti/ccs1260/ccs
+	Workspace location: /home/clutch13/Documents/IGVC_Robot_Files/igvc_remote
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2024-11-01 18:32:51.754
+!MESSAGE constructor
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2024-11-01 18:32:51.764
+!MESSAGE done with directories
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2024-11-01 18:32:51.765
+!MESSAGE loading ti_logger
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2024-11-01 18:32:51.766
+!MESSAGE Platform os: linux
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2024-11-01 18:32:51.766
+!MESSAGE loading cTools
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2024-11-01 18:32:51.772
+!MESSAGE loading TraceFactory
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2024-11-01 18:32:51.773
+!MESSAGE loading sqlite3
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2024-11-01 18:32:51.778
+!MESSAGE loading CloudTrace
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2024-11-01 18:32:51.784
+!MESSAGE CloudTrace interface loaded
+
+!ENTRY com.ti.ccstudio.project.ui.webcontent 1 0 2024-11-01 18:32:52.202
+!MESSAGE CCS HTTP adapter started! [ccs.port:45337] - Open 'http://localhost:45337/ide' in web browser to see listing of available APIs...
+
+!ENTRY org.eclipse.equinox.p2.repository 2 0 2024-11-01 18:32:54.315
+!MESSAGE Using unsafe http transport to retrieve http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2win32/content.xml.xz, see CVE-2021-41033. Consider using https instead.
+
+!ENTRY org.eclipse.equinox.p2.repository 2 0 2024-11-01 18:32:56.138
+!MESSAGE Using unsafe http transport to retrieve http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2linux/content.xml.xz, see CVE-2021-41033. Consider using https instead.
+
+!ENTRY org.eclipse.equinox.p2.repository 2 0 2024-11-01 18:32:57.494
+!MESSAGE Using unsafe http transport to retrieve http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2mac/content.xml.xz, see CVE-2021-41033. Consider using https instead.
+
+!ENTRY org.eclipse.equinox.p2.repository 2 0 2024-11-01 18:32:58.022
+!MESSAGE Using unsafe http transport to retrieve http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/CCSv5/Updates/, see CVE-2021-41033. Consider using https instead.
+
+!ENTRY org.eclipse.equinox.p2.repository 2 0 2024-11-01 18:32:58.313
+!MESSAGE Using unsafe http transport to retrieve http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2win32/content.xml.xz, see CVE-2021-41033. Consider using https instead.
+
+!ENTRY org.eclipse.equinox.p2.repository 2 0 2024-11-01 18:32:59.810
+!MESSAGE Using unsafe http transport to retrieve http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2linux/content.xml.xz, see CVE-2021-41033. Consider using https instead.
+
+!ENTRY org.eclipse.equinox.p2.repository 2 0 2024-11-01 18:33:00.925
+!MESSAGE Using unsafe http transport to retrieve http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2mac/content.xml.xz, see CVE-2021-41033. Consider using https instead.
+
+!ENTRY org.eclipse.equinox.p2.repository 2 0 2024-11-01 18:33:01.212
+!MESSAGE Using unsafe http transport to retrieve http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/CCSv5/Updates/, see CVE-2021-41033. Consider using https instead.
+
+!ENTRY org.eclipse.equinox.p2.repository 2 0 2024-11-01 18:33:02.027
+!MESSAGE Using unsafe http transport to retrieve http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2win32/content.xml.xz, see CVE-2021-41033. Consider using https instead.
+
+!ENTRY org.eclipse.equinox.p2.repository 2 0 2024-11-01 18:33:03.482
+!MESSAGE Using unsafe http transport to retrieve http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2linux/content.xml.xz, see CVE-2021-41033. Consider using https instead.
+
+!ENTRY org.eclipse.equinox.p2.repository 2 0 2024-11-01 18:33:14.234
+!MESSAGE Using unsafe http transport to retrieve http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2linux/content.xml.xz, see CVE-2021-41033. Consider using https instead.
+
+!ENTRY org.eclipse.equinox.p2.repository 2 0 2024-11-01 18:33:42.440
+!MESSAGE Using unsafe http transport to retrieve http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2mac/content.xml.xz, see CVE-2021-41033. Consider using https instead.
+
+!ENTRY org.eclipse.equinox.p2.repository 2 0 2024-11-01 18:33:42.859
+!MESSAGE Using unsafe http transport to retrieve http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/CCSv5/Updates/, see CVE-2021-41033. Consider using https instead.

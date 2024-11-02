@@ -272,7 +272,16 @@ void button_complete(void)
 
             }
 
+            char mySpeed[9];
+            putsUart0("Left  wheel speed: ")
+            int_to_ascii(leftMotorSpeed,mySpeed);
+            putsUart0(mySpeed);
+            putsUart0("\n");
 
+            putsUart0("Right wheel speed: ");
+            int_to_ascii(rightMotorSpeed,mySpeed);
+            putsUart0(mySpeed);
+            putsUart0("\n");
             remote_command = 0;
 
 }
