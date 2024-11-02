@@ -32,7 +32,6 @@
 #define RIGHT_MOTOR_OFFSET_RVSBEGIN 57400                              // right motor starts going backwards at 57400
 
 #define LEFT_MOTOR_OFFSET_RVSBEGIN 55600                               // left motor starts moving forward at 55600
-
 #define TAU 22500                                                      // time of tau/ 25ns = count time
 #define IDLE_LOW_LIMIT   480000
 #define IDLE_HIGH_LIMIT  560000

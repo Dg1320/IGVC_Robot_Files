@@ -33,13 +33,6 @@
 
 #define LEFT_MOTOR_OFFSET_RVSBEGIN 55600                               // left motor starts moving forward at 55600
 
-#define TAU 22500                                                      // time of tau/ 25ns = count time
-#define IDLE_LOW_LIMIT   480000
-#define IDLE_HIGH_LIMIT  560000
-#define THIRTY_TWO_BIT_PLACE    4294967296
-
-#define GO   0b00000001
-#define STOP 0b00000010
 //-----------------------------------------------------------------------------
 // Global Variables
 //-----------------------------------------------------------------------------
@@ -59,9 +52,19 @@ extern   bool rightrvs;
 extern   bool leftrvs;
 extern   bool fwd;
 extern   bool rvs;
+//-----------------------------------------------------------------------------
+// Extern Variables
+//-----------------------------------------------------------------------------
+
 extern bool self_drive;
 
+#define TAU 22500                               // time of tau/ 25ns = count time
+#define IDLE_LOW_LIMIT   480000
+#define IDLE_HIGH_LIMIT  560000
+#define THIRTY_TWO_BIT_PLACE    4294967296
 
+#define GO   0b00000001
+#define STOP 0b00000010
 
 void setup_remote_functions(void)
 {

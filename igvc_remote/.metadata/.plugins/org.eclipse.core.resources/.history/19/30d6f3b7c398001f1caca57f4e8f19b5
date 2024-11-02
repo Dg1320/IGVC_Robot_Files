@@ -163,9 +163,6 @@ void letsStop(void)
 
 void goForward(void)
 {
-    GREEN_LED = 1;
-    waitMicrosecond(500000);
-    //////////////////////////////////////////////////////////////////////////
     WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
     leftMotorSpeed = LEFT_MOTOR_OFFSET_FWDBEGIN;
     WTIMER5_TAILR_R = leftMotorSpeed;
@@ -181,9 +178,6 @@ void goForward(void)
 }
 void increaseForwardSpeed(void)
 {
-    GREEN_LED = 1;
-    waitMicrosecond(500000);
-    //////////////////////////////////////////////////////////////////////////
     WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
     leftMotorSpeed +=1000;
     WTIMER5_TAILR_R = leftMotorSpeed;
@@ -197,9 +191,6 @@ void increaseForwardSpeed(void)
 
 void goReverse(void)
 {
-    GREEN_LED = 1;
-    waitMicrosecond(500000);
-    //////////////////////////////////////////////////////////////////////////
     WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
     TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
 
@@ -219,9 +210,6 @@ void goReverse(void)
 
 void increaseReverseSpeed(void)
 {
-    GREEN_LED = 1;
-    waitMicrosecond(500000);
-    //////////////////////////////////////////////////////////////////////////
     WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
     leftMotorSpeed -=500;
     WTIMER5_TAILR_R = leftMotorSpeed;

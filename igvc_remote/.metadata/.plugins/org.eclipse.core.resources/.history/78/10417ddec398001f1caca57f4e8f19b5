@@ -33,13 +33,6 @@
 
 #define LEFT_MOTOR_OFFSET_RVSBEGIN 55600                               // left motor starts moving forward at 55600
 
-#define TAU 22500                                                      // time of tau/ 25ns = count time
-#define IDLE_LOW_LIMIT   480000
-#define IDLE_HIGH_LIMIT  560000
-#define THIRTY_TWO_BIT_PLACE    4294967296
-
-#define GO   0b00000001
-#define STOP 0b00000010
 //-----------------------------------------------------------------------------
 // Global Variables
 //-----------------------------------------------------------------------------
@@ -59,9 +52,19 @@ extern   bool rightrvs;
 extern   bool leftrvs;
 extern   bool fwd;
 extern   bool rvs;
+//-----------------------------------------------------------------------------
+// Extern Variables
+//-----------------------------------------------------------------------------
+
 extern bool self_drive;
 
+#define TAU 22500                               // time of tau/ 25ns = count time
+#define IDLE_LOW_LIMIT   480000
+#define IDLE_HIGH_LIMIT  560000
+#define THIRTY_TWO_BIT_PLACE    4294967296
 
+#define GO   0b00000001
+#define STOP 0b00000010
 
 void setup_remote_functions(void)
 {
@@ -148,26 +151,34 @@ void button_complete(void)
 {
 
 
-            switch(remote_command)
+            switch(remote_command)                                 // control speed--- thousand millimeters per minute
             {
 
                 case 0b00100000110111110000001011111101:           // forward       UP BUTTON
 
 
-                            if (!fwd)  goForward();
+                            if (!fwd)   goForward();
 
-                            else  increaseForwardSpeed();
+                            else        increaseForwardSpeed();
 
-                            break;
+                        break;
 //------------------------------------------------------------------------------------
 
                 case 0b00100000110111111000001001111101:          // backwards      DOWN BUTTON
 
-                            if (!rvs) goReverse();
+                            GREEN_LED = 1;
+                            waitMicrosecond(500000);                      // allow light to remain .... extra signals can be caught from different sources
+                            if (!rvs)
+                            {
+                                goReverse();
 
-                            else increaseReverseSpeed();
+                            }
+                            else
+                            {
+                                increaseReverseSpeed();
+                            }
 
-                            break;
+                        break;
 //------------------------------------------------------------------------------------
 
                 case 0b00100000110111110110000010011111:            //    RIGHT BUTTON
@@ -186,47 +197,70 @@ void button_complete(void)
 
 
                 case 0b00100000110111110000000011111111:         //     CHANNEL UP BUTTON
+                            GREEN_LED = 1;
+                            waitMicrosecond(500000);
 
-                            if (!rightfwd) rightMotorStartFwd();
+                            if (rightfwd == false)
+                            {
+                                rightMotorStartFwd();
+                            }
+                            else
+                            {
+                                rightMotorIncreaseSpeedFwd();
+                            }
 
-                            else rightMotorIncreaseSpeedFwd();
-
-                            break;
+                        break;
 //------------------------------------------------------------------------------------
 
                 case 0b00100000110111111000000001111111:      //      CHANNEL DOWN BUTTON
+                    GREEN_LED = 1;
+                    waitMicrosecond(500000);
 
-                            if (!rightrvs)  rightMotorStartRvs();
-
-                            else rightMotorIncreaseSpeedRvs();
-
-                            break;
+                            if (rightrvs == false)
+                            {
+                                rightMotorStartRvs();
+                            }
+                            else
+                            {
+                                rightMotorIncreaseSpeedRvs();
+                            }
+                                break;
 
 //------------------------------------------------------------------------------------
 
                 case 0b00100000110111110100000010111111:    //     VOLUME UP BUTTON
 
-
-                            if (!leftfwd) leftMotorStartFwd();
-
-                            else leftMotorIncreaseSpeedFwd();
-
-                            break;
+                            GREEN_LED = 1;
+                            waitMicrosecond(500000);
+                            if (leftfwd == false)
+                            {
+                                leftMotorStartFwd();
+                            }
+                            else
+                            {
+                                leftMotorIncreaseSpeedFwd();
+                            }
+                                break;
 //------------------------------------------------------------------------------------
                 case 0b00100000110111111100000000111111:    //    VOLUME DOWN BUTTON
 
 
-                            if (!leftrvs)   leftMotorStartRvs();
+                            if (leftrvs == false)
+                            {
+                                leftMotorStartRvs();
+                            }
+                            else
+                            {
+                                leftMotorIncreaseSpeedRvs();
+                            }
 
-                            else leftMotorIncreaseSpeedRvs();
-
-                            break;
+                                break;
 
 
 //------------------------------------------------------------------------------------
                 case 0b00100000110111110110101010010101:  // stop         NETFLIX BUTTON
 
-                            letsStop();
+                                letsStop();
 
                             break;
 
