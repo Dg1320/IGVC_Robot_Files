@@ -23,15 +23,6 @@
 
 
 #define PIN_PD3 0b00001000
-// forward direction                                                JEEP WITH BOTH BATTERIES
-#define RIGHT_MOTOR_OFFSET_FWDBEGIN 64300                              // right motor starts moving forward at 64300
-
-#define LEFT_MOTOR_OFFSET_FWDBEGIN 65200                               // left motor starts moving forward at 65200
-
-// reverse direction
-#define RIGHT_MOTOR_OFFSET_RVSBEGIN 57400                              // right motor starts going backwards at 57400
-
-#define LEFT_MOTOR_OFFSET_RVSBEGIN 55600                               // left motor starts moving forward at 55600
 
 #define TAU 22500                                                      // time of tau/ 25ns = count time
 #define IDLE_LOW_LIMIT   480000
@@ -40,6 +31,24 @@
 
 #define GO   0b00000001
 #define STOP 0b00000010
+
+//  direction                                                JEEP WITH BOTH BATTERIES
+#define RIGHT_MOTOR_OFFSET_SLOW_FWDBEGIN        65250
+#define RIGHT_MOTOR_OFFSET_MEDIUM_FWDBEGIN      68250
+#define RIGHT_MOTOR_OFFSET_FULL_SPEED_FWDBEGIN  72750
+
+#define LEFT_MOTOR_OFFSET_SLOW_FWDBEGIN         56100
+#define LEFT_MOTOR_OFFSET_MEDIUM_FWDBEGIN       68750
+#define LEFT_MOTOR_OFFSET_FULL_SPEED_FWDBEGIN   80000
+
+// reverse direction
+#define RIGHT_MOTOR_OFFSET_SLOW_RVSBEGIN        56600
+#define RIGHT_MOTOR_OFFSET_MEDIUM_RVSBEGIN      54100
+#define RIGHT_MOTOR_OFFSET_FULL_SPEED_RVSBEGIN  48300
+
+#define LEFT_MOTOR_OFFSET_SLOW_RVSBEGIN         56100
+#define LEFT_MOTOR_OFFSET_MEDIUM_RVSBEGIN       53600
+#define LEFT_MOTOR_OFFSET_FULL_SPEED_RVSBEGIN   40000
 //-----------------------------------------------------------------------------
 // Global Variables
 //-----------------------------------------------------------------------------
@@ -101,12 +110,12 @@ void esp32_signals(void)
 
            BLUE_LED ^= 1;                    // WHEN INTERRUPT OCCUR TOGGLE LED
            WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
-           leftMotorSpeed = LEFT_MOTOR_OFFSET_FWDBEGIN+1500;
+           leftMotorSpeed = RIGHT_MOTOR_OFFSET_SLOW_FWDBEGIN;
            WTIMER5_TAILR_R = leftMotorSpeed;
            WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
 
            TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
-           rightMotorSpeed = RIGHT_MOTOR_OFFSET_FWDBEGIN+1500;
+           rightMotorSpeed = LEFT_MOTOR_OFFSET_SLOW_FWDBEGIN;
            TIMER2_TAILR_R = rightMotorSpeed;
            TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
 
@@ -154,7 +163,7 @@ void button_complete(void)
                 case 0b00100000110111110000001011111101:           // forward       UP BUTTON
 
 
-                            if (!fwd)  goForward();
+                            if (!fwd)  goSlowFwd();
 
                             else  increaseForwardSpeed();
 
@@ -163,7 +172,7 @@ void button_complete(void)
 
                 case 0b00100000110111111000001001111101:          // backwards      DOWN BUTTON
 
-                            if (!rvs) goReverse();
+                            if (!rvs) goSlowRvs();
 
                             else increaseReverseSpeed();
 
@@ -172,33 +181,28 @@ void button_complete(void)
 
                 case 0b00100000110111110110000010011111:            //    RIGHT BUTTON
 
-                            GREEN_LED = 1;
+                            goMediumFwd();
                             waitMicrosecond(500000);                      // allow light to remain .... extra signals can be caught from different sources
 
                             break;
 
                 case 0b00100000110111111110000000011111:            //    LEFT BUTTON
 
-                            GREEN_LED = 1;
+                            goFullSpeedFwd();
                             waitMicrosecond(500000);
 
                             break;
 
-
                 case 0b00100000110111110000000011111111:         //     CHANNEL UP BUTTON
 
-                            if (!rightfwd) rightMotorStartFwd();
-
-                            else rightMotorIncreaseSpeedFwd();
+                             rightMotorIncreaseSpeedFwd();
 
                             break;
 //------------------------------------------------------------------------------------
 
                 case 0b00100000110111111000000001111111:      //      CHANNEL DOWN BUTTON
 
-                            if (!rightrvs)  rightMotorStartRvs();
-
-                            else rightMotorIncreaseSpeedRvs();
+                             rightMotorIncreaseSpeedRvs();
 
                             break;
 
@@ -207,18 +211,13 @@ void button_complete(void)
                 case 0b00100000110111110100000010111111:    //     VOLUME UP BUTTON
 
 
-                            if (!leftfwd) leftMotorStartFwd();
-
-                            else leftMotorIncreaseSpeedFwd();
+                             leftMotorIncreaseSpeedFwd();
 
                             break;
 //------------------------------------------------------------------------------------
                 case 0b00100000110111111100000000111111:    //    VOLUME DOWN BUTTON
 
-
-                            if (!leftrvs)   leftMotorStartRvs();
-
-                            else leftMotorIncreaseSpeedRvs();
+                             leftMotorIncreaseSpeedRvs();
 
                             break;
 
@@ -233,7 +232,7 @@ void button_complete(void)
             }
 
             char mySpeed[9];
-            putsUart0("Left  wheel speed: ")
+            putsUart0("Left  wheel speed: ");
             int_to_ascii(leftMotorSpeed,mySpeed);
             putsUart0(mySpeed);
             putsUart0("\n");
