@@ -27,6 +27,9 @@ void goMediumRvs(void);
 void goFullSpeedFwd(void);
 void goFullSpeedRvs(void);
 
+void rotateClockwise(void);
+void rotateCounterClockwise(void);
+
 void letsStop(void);
 
 #endif /* MY_WHEEL_OPS_H_ */

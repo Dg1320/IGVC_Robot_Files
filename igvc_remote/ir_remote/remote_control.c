@@ -29,15 +29,20 @@
 #define IDLE_HIGH_LIMIT  560000
 #define THIRTY_TWO_BIT_PLACE    4294967296
 
-#define GO   0b00000001
-#define STOP 0b00000010
+#define FORWARD  0b00000001
+#define STOP     0b00000010
+#define RIGHT    0b00000100
+#define LEFT     0b01000000
+#define SLOW     0b00000010
+#define CLOCKWISE           0b00000001
+#define COUNTERCLOCKWISE    0b00000010
 
 //  direction                                                JEEP WITH BOTH BATTERIES
 #define RIGHT_MOTOR_OFFSET_SLOW_FWDBEGIN        65250
 #define RIGHT_MOTOR_OFFSET_MEDIUM_FWDBEGIN      68250
 #define RIGHT_MOTOR_OFFSET_FULL_SPEED_FWDBEGIN  72750
 
-#define LEFT_MOTOR_OFFSET_SLOW_FWDBEGIN         56100
+#define LEFT_MOTOR_OFFSET_SLOW_FWDBEGIN         65500
 #define LEFT_MOTOR_OFFSET_MEDIUM_FWDBEGIN       68750
 #define LEFT_MOTOR_OFFSET_FULL_SPEED_FWDBEGIN   80000
 
@@ -70,7 +75,9 @@ extern   bool fwd;
 extern   bool rvs;
 extern bool self_drive;
 
-
+bool waitNow = false;
+bool clockWiseWaitNow = false;
+bool counterClockwiseWaitNow = false;
 
 void setup_remote_functions(void)
 {
@@ -101,53 +108,84 @@ void setup_remote_functions(void)
 
 }
 
+void rightMotorIncreaseSpeedFwdFromISR(void)
+{
+    GREEN_LED = 1;
+    waitMicrosecond(500000);
+    //////////////////////////////////////////////////////////////////////////
+    TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
+    rightMotorSpeed +=50;
+    TIMER2_TAILR_R = rightMotorSpeed;
+    TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
+
+}
 
 
 void esp32_signals(void)
 {
-    if(GPIO_PORTD_MIS_R & GO)       // left reciever
+    if(GPIO_PORTD_MIS_R & FORWARD)       // forward reciever
    {
 
            BLUE_LED ^= 1;                    // WHEN INTERRUPT OCCUR TOGGLE LED
-           WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
-           leftMotorSpeed = RIGHT_MOTOR_OFFSET_SLOW_FWDBEGIN;
-           WTIMER5_TAILR_R = leftMotorSpeed;
-           WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
-
-           TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
-           rightMotorSpeed = LEFT_MOTOR_OFFSET_SLOW_FWDBEGIN;
-           TIMER2_TAILR_R = rightMotorSpeed;
-           TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
-
-           fwd = true;
-           rvs = false;
+           goMediumFwd();
+           waitNow = true;
 
    }
 
 
-   if(GPIO_PORTD_MIS_R & STOP)       // left reciever
+   if(GPIO_PORTD_MIS_R & STOP)       // stop reciever
    {
            BLUE_LED  ^= 1;                    // WHEN INTERRUPT OCCUR TOGGLE LED
-           WTIMER5_CTL_R &= ~TIMER_CTL_TAEN;        //  turn-off timer to set new time
-           leftMotorSpeed = 60000;
-           WTIMER5_TAILR_R = leftMotorSpeed;
-           WTIMER5_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
-
-           TIMER2_CTL_R &= ~TIMER_CTL_TAEN;             // turn-off timer to set new time
-           TIMER2_TAILR_R = 60000;
-           TIMER2_CTL_R |= TIMER_CTL_TAEN;         // turn-on one shot timer
-           rightfwd = false;
-           rightrvs = false;
-           leftfwd = false;
-           leftrvs = false;
-           fwd = false;
-           rvs = false;
+           letsStop();
 
    }
-       GPIO_PORTD_ICR_R |= STOP | GO;       // clear the interrupt flag
+
+   if(GPIO_PORTD_MIS_R & RIGHT)       // right reciever
+   {
+           BLUE_LED  ^= 1;                    // WHEN INTERRUPT OCCUR TOGGLE LED
+           rotateClockwise();
+           clockWiseWaitNow = true;
+
+   }
+   if(GPIO_PORTD_MIS_R & LEFT)       // right reciever
+   {
+           BLUE_LED  ^= 1;                    // WHEN INTERRUPT OCCUR TOGGLE LED
+           rotateCounterClockwise();          // speed up the left motor to turn to the right
+           counterClockwiseWaitNow = true;
+
+   }
+   GPIO_PORTD_ICR_R |= STOP | FORWARD | RIGHT | LEFT;       // clear the interrupt flag
 
 
 }
+
+
+void esp32_slowSignal(void)
+{
+           BLUE_LED ^= 1;                    // WHEN INTERRUPT OCCUR TOGGLE LED
+           increaseReverseSpeed();
+
+   GPIO_PORTF_ICR_R |= SLOW;       // clear the interrupt flag
+
+
+}
+//
+//void esp32_rotateSignal(void)
+//{
+//    if(GPIO_PORTE_MIS_R & CLOCKWISE)       // CLOCKWISE reciever
+//    {
+//        BLUE_LED  ^= 1;                    // WHEN INTERRUPT OCCUR TOGGLE LED
+//        rotateClockwise();
+//    }
+//    if(GPIO_PORTE_MIS_R & COUNTERCLOCKWISE)       // COUNTERCLOCKWISE reciever
+//    {
+//        BLUE_LED  ^= 1;                    // WHEN INTERRUPT OCCUR TOGGLE LED
+//        rotateCounterClockwise();
+//    }
+//    GPIO_PORTE_ICR_R |= CLOCKWISE | COUNTERCLOCKWISE ;       // clear the interrupt flag}
+//}
+
+
 //#define DEBUG
 
 
@@ -181,28 +219,27 @@ void button_complete(void)
 
                 case 0b00100000110111110110000010011111:            //    RIGHT BUTTON
 
-                            goMediumFwd();
-                            waitMicrosecond(500000);                      // allow light to remain .... extra signals can be caught from different sources
+                            rightMotorIncreaseSpeedFwd();
 
                             break;
 
                 case 0b00100000110111111110000000011111:            //    LEFT BUTTON
 
-                            goFullSpeedFwd();
-                            waitMicrosecond(500000);
+                            leftMotorIncreaseSpeedRvs();
 
                             break;
 
                 case 0b00100000110111110000000011111111:         //     CHANNEL UP BUTTON
 
-                             rightMotorIncreaseSpeedFwd();
+                            goFullSpeedFwd();
+
 
                             break;
 //------------------------------------------------------------------------------------
 
                 case 0b00100000110111111000000001111111:      //      CHANNEL DOWN BUTTON
 
-                             rightMotorIncreaseSpeedRvs();
+                            goFullSpeedRvs();
 
                             break;
 
@@ -211,13 +248,13 @@ void button_complete(void)
                 case 0b00100000110111110100000010111111:    //     VOLUME UP BUTTON
 
 
-                             leftMotorIncreaseSpeedFwd();
+                            goMediumFwd();
 
                             break;
 //------------------------------------------------------------------------------------
                 case 0b00100000110111111100000000111111:    //    VOLUME DOWN BUTTON
 
-                             leftMotorIncreaseSpeedRvs();
+                            goMediumRvs();
 
                             break;
 

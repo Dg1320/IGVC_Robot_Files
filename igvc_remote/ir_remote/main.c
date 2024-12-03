@@ -50,7 +50,13 @@
 #define BLUE_LED_MASK 0b00000100
 
 #define FORWARD  0b00000001
-#define BACKWARD 0b00000010
+#define STOP     0b00000010
+#define RIGHT    0b00000100
+#define LEFT     0b01000000
+#define SLOW     0b00000010
+#define CLOCKWISE           0b00000001
+#define COUNTERCLOCKWISE    0b00000010
+
 #define PC4_MASK  0b00010000
 #define PC5_MASK  0b00100000
 
@@ -63,31 +69,43 @@
 
 
 
-
-
 //-----------------------------------------------------------------------------
 // Subroutines
 //-----------------------------------------------------------------------------
 
 // Initialize Hardware
    // signals from esp32
-    // will need four signals to determine fw/rv/l/r
+    // will need four signals to determine fw/stop/l/r
  void esp32_signals_setup(void)
  {
-        GPIO_PORTD_DIR_R &=  ~(FORWARD | BACKWARD);  // PD[0] and PD[1] are inputs
-        GPIO_PORTD_DEN_R |= FORWARD | BACKWARD ;
-        GPIO_PORTD_PDR_R |= FORWARD | BACKWARD ;                 // enable internal pull-down resistors
+        GPIO_PORTD_DIR_R &=  ~(FORWARD | STOP | RIGHT | LEFT);  // PD[0] and PD[1] PD[2] and PD[6] are inputs
+        GPIO_PORTD_DEN_R |= FORWARD | STOP | RIGHT | LEFT ;
+        GPIO_PORTD_PDR_R |= FORWARD | STOP | RIGHT | LEFT ;                 // enable internal pull-down resistors
 
         // set up interrupt
-        GPIO_PORTD_IM_R &=  ~(FORWARD | BACKWARD);     // clear interrupt mask to prevent false interrupts
-        GPIO_PORTD_IBE_R &= ~(FORWARD | BACKWARD); // Turn off both edge detecting sense
-        GPIO_PORTD_IEV_R |=   FORWARD | BACKWARD;  // Make detect rising edge
-        GPIO_PORTD_ICR_R |=   FORWARD | BACKWARD;     // clear the interrupts
-        GPIO_PORTD_IM_R |=    FORWARD | BACKWARD;     // turn on interrupt mask
+        GPIO_PORTD_IM_R &=  ~(FORWARD | STOP | RIGHT | LEFT);    // clear interrupt mask to prevent false interrupts
+        GPIO_PORTD_IBE_R &= ~(FORWARD | STOP | RIGHT | LEFT);    // Turn off both edge detecting sense
+        GPIO_PORTD_IEV_R |=   FORWARD | STOP | RIGHT | LEFT ;    // Make detect rising edge
+        GPIO_PORTD_ICR_R |=   FORWARD | STOP | RIGHT | LEFT ;    // clear the interrupts
+        GPIO_PORTD_IM_R  |=   FORWARD | STOP | RIGHT | LEFT ;    // turn on interrupt mask
 
         NVIC_EN0_R = 1 << (INT_GPIOD-16);                // turn-on interrupt 19 (GPIOD)
 
+        GPIO_PORTF_DIR_R &=  ~SLOW;  // PD[0] and PD[1] PD[2] and PD[6] are inputs
+        GPIO_PORTF_DEN_R |= SLOW;
+        GPIO_PORTF_PDR_R |= SLOW ;                 // enable internal pull-down resistors
+
+
+        // set up interrupt
+        GPIO_PORTF_IM_R &=  ~SLOW;    // clear interrupt mask to prevent false interrupts
+        GPIO_PORTF_IBE_R &= ~SLOW;    // Turn off both edge detecting sense
+        GPIO_PORTF_IEV_R |=   SLOW ;    // Make detect rising edge
+        GPIO_PORTF_ICR_R |=  SLOW ;    // clear the interrupts
+        GPIO_PORTF_IM_R  |=   SLOW ;    // turn on interrupt mask
+        NVIC_EN0_R = 1 << (INT_GPIOF-16);                // turn-on interrupt 19 (GPIOF)
+
 }
+
 
 
 
@@ -97,7 +115,7 @@ void initHw()
         initSystemClockTo40Mhz();
 
         // Enable clocks
-        SYSCTL_RCGCGPIO_R = SYSCTL_RCGCGPIO_R2|SYSCTL_RCGCGPIO_R3|SYSCTL_RCGCGPIO_R5;
+        SYSCTL_RCGCGPIO_R = SYSCTL_RCGCGPIO_R2 | SYSCTL_RCGCGPIO_R3 | SYSCTL_RCGCGPIO_R5;
         _delay_cycles(3);
 
         // Configure LED pins
@@ -107,7 +125,7 @@ void initHw()
        GPIO_PORTC_DIR_R |= PC4_MASK | PC5_MASK ;        // output
        GPIO_PORTC_DEN_R |= PC4_MASK | PC5_MASK;         // enable outputs
 
-        initUart0();
+       initUart0();
 
 }
 
@@ -115,6 +133,9 @@ void initHw()
 // Main
 //-----------------------------------------------------------------------------
 
+extern bool waitNow;
+extern bool clockWiseWaitNow;
+extern bool counterClockwiseWaitNow;
 
 int main(void)
 
@@ -134,6 +155,27 @@ int main(void)
 
     while(1)
     {
+        if(waitNow)
+        {
+            waitMicrosecond(1000000);
+            waitNow = false;
+
+            letsStop();
+        }
+        if(clockWiseWaitNow)
+        {
+            waitMicrosecond(1000000);
+            clockWiseWaitNow = false;
+
+            letsStop();
+        }
+        if(counterClockwiseWaitNow)
+        {
+            waitMicrosecond(1000000);
+            counterClockwiseWaitNow = false;
+
+            letsStop();
+        }
 
     }
 }

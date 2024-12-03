@@ -57,6 +57,9 @@ extern uint32_t __STACK_TOP;
 // To be added by user
 extern void button_command_ISR (void);
 extern void esp32_signals (void);
+extern void esp32_slowSignal (void);
+extern void esp32_rotateSignal (void);
+
 extern void sysTickISR (void);
 extern void oneShotISR (void);
 extern void oneShotISR2 (void);
@@ -118,7 +121,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // Analog Comparator 2
     IntDefaultHandler,                      // System Control (PLL, OSC, BO)
     IntDefaultHandler,                      // FLASH Control
-    IntDefaultHandler,                      // GPIO Port F
+    esp32_slowSignal,                      // GPIO Port F
     IntDefaultHandler,                      // GPIO Port G
     IntDefaultHandler,                      // GPIO Port H
     IntDefaultHandler,                      // UART2 Rx and Tx
